@@ -1,0 +1,35 @@
+{
+  "name": "remote-sensing",
+  "version": "1.0.0",
+  "description": "A collection of remote sensing exercises and notes for R",
+  "main": "index.html",
+  "scripts": {
+    "build": "npx @11ty/eleventy",
+    "bench": "DEBUG=Eleventy:Benchmark* npx @11ty/eleventy",
+    "watch": "npx @11ty/eleventy --watch",
+    "serve": "npx @11ty/eleventy --serve",
+    "start": "npx @11ty/eleventy --serve",
+    "debug": "DEBUG=* npx @11ty/eleventy",
+    "update": "npm i -g npm-check-updates && ncu -u && npm install && npm audit fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ItaiAxelrad/remote-sensing-data.git"
+  },
+  "keywords": [
+    "remote",
+    "sensing",
+    "r"
+  ],
+  "author": "Itai Axelrad",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ItaiAxelrad/remote-sensing-data/issues"
+  },
+  "homepage": "https://github.com/ItaiAxelrad/remote-sensing-data#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^1.0.2",
+    "@11ty/eleventy-navigation": "^0.3.5",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^4.1.0"
+  }
+}

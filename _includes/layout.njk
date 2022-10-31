@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>{{ title }}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/images/favicon.png" sizes="32x32">
+    <link href="https://unpkg.com/prismjs@1.20.0/themes/prism-okaidia.css" rel="stylesheet">
+    <style>
+      body {
+          font-family: system-ui, sans-serif;
+          color: #333;
+          background: white;
+          margin: 0 auto;
+          padding: 1rem;
+          max-width: 65ch;
+        }
+      img {
+          display: block;
+          margin: 0 auto;
+          width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <nav><a href="/">Home</a></nav>
+    <h1>{{ title }}</h1>
+    <main>
+    {{ content | safe }}
+    </main>
+    {%- if collections.posts %}
+    {%- set nextPost = collections.posts | getNextCollectionItem(page) %}
+    {%- set previousPost = collections.posts | getPreviousCollectionItem(page) %}
+      {%- if nextPost or previousPost %}
+      <hr style="border: none; height: 1px; background: #999;">
+      <ul style="display: flex; justify-content: space-between; list-style: none;">
+        {%- if previousPost %}
+          <li>Previous: <a href="{{ previousPost.url | url }}">{{ previousPost.data.title }}</a></li>
+        {% endif %}
+        {%- if nextPost %}
+          <li>Next: <a href="{{ nextPost.url | url }}">{{ nextPost.data.title }}</a></li>
+        {% endif %}
+      </ul>
+      {%- endif %}
+    {%- endif %}
+  </body>
+</html>
