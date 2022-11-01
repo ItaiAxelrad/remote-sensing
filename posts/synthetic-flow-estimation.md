@@ -5,11 +5,11 @@ Synthetic flow estimation is the generation of a very long record of synthetic r
 
 The procedure is articulated in the following steps:
 
-- A generation model is identified, calibrated and validated.
+- A generation model is identified, calibrated, and validated.
 - The long record is generated.
 - The FDC is estimated.
 
-This examples uses the river Po, which runs through the city of Piacenza, Italy.
+This example uses the river Po, which runs through the city of Piacenza, Italy.
 
 ```r
 po=scan(“piacenza.txt”, skip=3) 

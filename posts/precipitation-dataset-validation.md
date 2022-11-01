@@ -4,9 +4,9 @@ date: 2018-05-16
 image: '/images/output1.png'
 tags: ['R', 'validation', 'precipitation', 'remote sensing']
 ---
-Remote sensing offers spatially and temporally continuous measurements of hydrological fluxes like rainfall, evapotranspiration and soil moisture. These measurements provide valuable information in data-scarce catchments around the world. Nevertheless, owing to a variety of sensor and retrieval algorithms, remote sensing data is subject to large uncertainties and errors. Therefore, it is imperative that remote sensing datasets are rigorously validated using ground truth before such datasets are used for applications such as calibration of climate forecasts, hydrologic modeling and streamflow forecasting.
+Remote sensing offers spatially and temporally continuous measurements of hydrological fluxes like rainfall, evapotranspiration, and soil moisture. These measurements provide valuable information in data-scarce catchments around the world. Nevertheless, owing to a variety of sensor and retrieval algorithms, remote sensing data is subject to large uncertainties and errors. Therefore, it is imperative that remote sensing datasets are rigorously validated using ground truth before such datasets are used for applications such as calibration of climate forecasts, hydrologic modeling, and streamflow forecasting.
 
-As an example, we can compare and validate different remotely sensed precipitation datasets using ground-based measurements for a catchment in East Africa. The area of study being the Omo-Gibe river basin in Ethiopia, using a time period of at least 1 year.
+As an example, we can compare and validate different remotely sensed precipitation datasets using ground-based measurements for a catchment in East Africa. The area of study is the Omo-Gibe river basin in Ethiopia, using a time period of at least 1 year.
 
 The comparison should focus on:
 
@@ -17,7 +17,7 @@ The comparison should focus on:
 
 ## Preprocessing of Data
 
-First, clear you workspace, set your working directory and load the required library
+First, clear your workspace, set your working directory, and load the required library
 
 ```r
 # clear workspace
@@ -55,7 +55,7 @@ gpcc_gibe = crop(GPCC,gibe_shp)
 trmm_gibe = crop(TRMM,gibe_shp)
 ```
 
-The datasets include TRMM 3B42RT, CMORPH, PERSIANN, and CenTrends (Ground truth data). Ground truth data (Centrends long-term rainfall record) should be used to quantify the climatology of the study area. Seasonality, inter annual variability and long-term change in rainfall of the study area should be adequately described.
+The datasets include TRMM 3B42RT, CMORPH, PERSIANN, and CenTrends (Ground truth data). Ground truth data (Centrends long-term rainfall record) should be used to quantify the climatology of the study area. Seasonality, inter-annual variability, and long-term change in rainfall in the study area should be adequately described.
 
 ## Comparison of Remote Sensing Datasets
 
@@ -88,7 +88,7 @@ title("trmm")
 
 ## Evaluation of Remote Sensing Datasets
 
-We can calculate relevant error metrics to compare and select the best remote sensing datasets. While there are many different error metrics, an important one to include is RMSE. Error metrics should be calculated for basin averages and each grid-pixel to characterize the spatial distribution of error.
+We can calculate relevant error metrics to compare and select the best remote-sensing datasets. While there are many different error metrics, an important one to include is RMSE. Error metrics should be calculated for basin averages and each grid pixel to characterize the spatial distribution of error.
 
 ```r
 # calculation of RMSE error

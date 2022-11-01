@@ -12,7 +12,7 @@ The `gdalUtils` package provides interesting wrappers facilitating the use of GD
 
 Exercise: Design a pre-processing chain to assess change in NDVI over time
 
-I would like to know if Wageningen, Netherlands, and its surroundings have changed with respect to its spring NDVI over the past 15 years. For that I would need to do a bi-temporal comparison of two NDVI images, acquired in spring. Simply subtracting the images should work, but unfortunately these haven't been pre-processed yet. I managed to download two Landsat raw surface reflectance products covering the area. They were acquired around the same period of the year, but about 30 years apart from each other. I don't know how to compare them. 
+I would like to know if Wageningen, Netherlands, and its surroundings have changed with respect to its spring NDVI over the past 15 years. For that, I would need to do a bi-temporal comparison of two NDVI images, acquired in spring. Simply subtracting the images should work, but unfortunately, these haven't been pre-processed yet. I managed to download two Landsat raw surface reflectance products covering the area. They were acquired around the same period of the year, but about 30 years apart from each other. I don't know how to compare them. 
 
 Can you please help me?
 
@@ -20,14 +20,14 @@ Data is available at: </data/Wageningen.zip> Note: Landsat 8 does not use the sa
 
 ### Hints
 
-- `list.files()` with pattern = argument. For example, list.files('data/', pattern = glob2rx('\*.tif'), full.names = TRUE) will return only the files that have the .tif extension.
-- You should always use full.names = TRUE in list.files() to be able to use the output directly.
-- ?intersect
+- `list.files()` with pattern = argument. For example, `list.files('data/', pattern = glob2rx('\*.tif'), full.names = TRUE)` will return only the files that have the `.tif` extension.
+- You should always use `full.names = TRUE` in `list.files()` to be able to use the output directly.
+- `?intersect`
 - `untar()` to programmatically extract the files from the archive.
 
 ### How to submit
 
-Create a well-structured reproducible R project showing in the main.R file:
+Create a well-structured reproducible R project showing in the main R file:
 
 - The workflow to pre-process the data
 - Some visualization of the intermediary outputs
@@ -41,26 +41,26 @@ Objective of today
 
 Learning outcomes of today:
 
-In today's lecture, we will explore the basics of handling spatial vector data in R. There are several R packages for this purpose but we will focus on using sp, `rgdal`, `rgeos` and some related packages. At the end of the lecture, you should be able to:
+In today's lecture, we will explore the basics of handling spatial vector data in R. There are several R packages for this purpose but we will focus on using sp, `rgdal`, `rgeos`, and some related packages. At the end of the lecture, you should be able to:
 
-- create point, line and polygon objects from scratch;
+- create point, line, and polygon objects from scratch;
 - explore the structure of sp classes for spatial vector data;
 - plot spatial vector data;
 - transform between datums and map projections;
 - apply basic operations on vector data, such as buffering, intersection and area calculation;
-- write spatial vector data to a kml file;
+- write spatial vector data to a `kml` file;
 
 ## Vector R Basics
 
 Some packages for working with spatial vector data in R
 
-The packages sp and `rgdal` are widely used throughout this course. Both packages not only provide functionality for raster data but also for vector data.
+The packages sp and `rgdal` are widely used throughout this course. Both packages not only provide functionality for raster data but also vector data.
 
-The sp package provides classes for importing, manipulating and exporting spatial data in R, and methods for doing so. It is often the foundation for other spatial packages, such as raster. The `rgdal` package includes bindings to parts of the OGR Simple Feature Library which provides access to a variety of vector file formats such as ESRI Shapefiles and kml. The OGR library is part of the widely used Geospatial Data Abstraction Library (GDAL). The GDAL library is the most useful freely-available library for reading and writing geospatial data. The GDAL library is well-documented (<http://gdal.org/>), but with a catch for R and Python programmers. The GDAL (and associated OGR) library and command line tools are all written in C and C++. Bindings are available that allow access from a variety of other languages including R and Python but the documentation is all written for the C++ version of the libraries. This can make reading the documentation rather challenging. Fortunately, the `rgdal` package, providing GDAL bindings in R, is also well documented with lots of examples. The same is valid for the Python libraries.
+The sp package provides classes for importing, manipulating, and exporting spatial data in R, and methods for doing so. It is often the foundation for other spatial packages, such as raster. The `rgdal` package includes bindings to parts of the OGR Simple Feature Library which provides access to a variety of vector file formats such as ESRI Shapefiles and `kml`. The OGR library is part of the widely used Geospatial Data Abstraction Library (GDAL). The GDAL library is the most useful freely-available library for reading and writing geospatial data. The GDAL library is well-documented (<http://gdal.org/>), but with a catch for R and Python programmers. The GDAL (and associated OGR) library and command line tools are all written in C and C++. Bindings are available that allow access from a variety of other languages including R and Python but the documentation is all written for the C++ version of the libraries. This can make reading the documentation rather challenging. Fortunately, the `rgdal` package, providing GDAL bindings in R, is also well documented with lots of examples. The same is valid for the Python libraries.
 
 Similarly, `rgeos` is an interface to the powerful Geometry Engine Open Source (GEOS) library for all kinds of operations on geometries (buffering, overlaying, area calculations, etc.). Thus, functionality that you commonly find in expensive GIS software is also available within R, using free but very powerful software libraries.
 
-The possibilities are huge. In this course we can only scratch the surface with some essentials, which hopefully invite you to experiment further and use them in your research. Details can be found in the book Applied Spatial Data Analysis with R and several vignettes authored by Roger Bivand, Edzer Pebesma and Virgilio Gomez-Rubio. Owing to time constraints, this lecture cannot cover the related package spacetime with classes and methods for spatio-temporal data \[@Bivand:2013ux\].
+The possibilities are huge. In this course, we can only scratch the surface with some essentials, which hopefully invite you to experiment further and use them in your research. Details can be found in the book Applied Spatial Data Analysis with R and several vignettes authored by Roger Bivand, Edzer Pebesma, and Virgilio Gomez-Rubio. Owing to time constraints, this lecture cannot cover the related package spacetime with classes and methods for spatio-temporal data.
 
 ## Creating and manipulating geometries
 
@@ -81,15 +81,15 @@ Overview of sp package spatial-only geometry classes.
 | rings | SpatialPolygons | No |
 | rings | SpatialPolygonsDataFrame | data.frame |
 
-We will go through a few examples of creating geometries from scratch to familiarize yourself with these classes.
+We will go through a few examples of creating geometries from scratch to familiarize ourselves with these classes.
 
 First, start Google Earth on your computer and make a note of the longitude and latitude of two points in Los Angeles that are relevant to you. Use a decimal degree notation with at least 4 digits after the decimal point. To change the settings in Google Earth click 'Tools | Options' and change the Show Lat/Long setting on the 3D View Tab.
 
 Points: `SpatialPoints`, `SpatialPointsDataFrame`
 
-The example below shows how you can create spatial point objects from these coordinates. Type ?function name (e.g. `?cbind`) for finding help on the functions used.
+The example below shows how you can create spatial point objects from these coordinates. Type `?function` name (e.g. `?cbind`) for finding help on the functions used.
 
-Class "CRS" of coordinate reference system arguments. Interface class to the PROJ.4 projection system. The class is defined as an empty stub accepting value NA in the sp package. If the `rgdal` package is available, then the class will permit spatial data to be associated with coordinate reference systems.
+Class "CRS" of coordinate reference system arguments. Interface class to the PROJ.4 projection system. The class is defined as an empty stub accepting the value NA in the sp package. If the `rgdal` package is available, then the class will permit spatial data to be associated with coordinate reference systems.
 
 ```r
 ## Load the sp and rgdal packages
@@ -137,7 +137,7 @@ What is needed to make the following work?
 spplot(mypointsdf, col.regions = c(1,2))
 ```
 
-The the difference between the objects `mypoints` and `mypointsdf` is that `mypoints` is spatial points object, while `mypointsdf` is a spatial point data frame.
+The difference between the objects `mypoints` and `mypointsdf` is that `mypoints` is a spatial points object, while `mypointsdf` is a spatial point data frame.
 
 ## Lines
 
@@ -238,7 +238,7 @@ Try to understand the above code and its results by studying help. Try to add th
 
 ### Writing and reading spatial vector data using OGR
 
-What now follows is a brief intermezzo before we continue with the classes for polygons. Let us first export the objects created as KML files that can be displayed in Google Earth. We will use the OGR functionality available through the package rgdal.
+What now follows is a brief intermezzo before we continue with the classes for polygons. Let us first export the objects created as KML files that can be displayed on Google Earth. We will use the OGR functionality available through the package `rgdal`.
 
 ```r
 library(rgdal)
@@ -253,9 +253,9 @@ writeOGR(mylinesdf, file.path("data","mylinesGE.kml"),
 
 Check (in Google Earth) whether the attribute data were written to the KML output.
 
-The function `readOGR` allows reading OGR compatible data into a suitable spatial vector object. Similar to `writeOGR`, the function requires entries for the arguments dsn (data source name) and layer (layer name). The interpretation of these entries vary by driver. Please study details in the help file.
+The function `readOGR` allows the reading of OGR compatible data into a suitable spatial vector object. Similar to `writeOGR`, the function requires entries for the arguments dsn (data source name) and layer (layer name). The interpretation of these entries varies by driver. Please study the details in the help file.
 
-Digitize a path (e.g. a bicycle route) between the two points of interest you selected earlier in Google Earth. This can be achieved using the Add Path functionality of Google Earth (see here for more info). Save the path in the data folder within the working directory under the name route.kml. We will read this file into a spatial lines object and add it to the already existing SpatialLinesDataFrame object.
+Digitize a path (e.g. a bicycle route) between the two points of interest you selected earlier in Google Earth. This can be achieved using the Add Path functionality of Google Earth (see here for more info). Save the path in the data folder within the working directory under the name `route.kml`. We will read this file into a spatial lines object and add it to the already existing SpatialLinesDataFrame object.
 
 ```r
 dsn = file.path("data","route.kml")
@@ -275,13 +275,13 @@ myroute$Description <- NULL # delete Description
 mylinesdf <- rbind.SpatialLines(mylinesdf, myroute)
 ```
 
-Try to understand the above code and results. Feel free to display the data and export to Google Earth.
+Try to understand the above code and results. Feel free to display the data and export it to Google Earth.
 
 ## Transformation of Coordinate System
 
-Transformations between coordinate systems are crucial to many GIS applications. The Keyhole Markup Language (kml) used by Google Earth uses latitude and longitude in a polar WGS84 coordinate system (i.e. geographic coordinates). However, in some of the examples below we will use metric distances (i.e. cartographic coordinates).There are two types of coordinate systems that you need to recognize: projected coordinate systems and un-projected coordinates systems
+Transformations between coordinate systems are crucial to many GIS applications. The Keyhole Markup Language (kml) used by Google Earth uses latitude and longitude in a polar WGS84 coordinate system (i.e. geographic coordinates). However, in some of the examples below, we will use metric distances (i.e. cartographic coordinates). There are two types of coordinate systems that you need to recognize: projected coordinate systems and un-projected coordinates systems
 
-One of the challenges of working with geo-spatial data is that geodetic locations (points on the Earth surface) are mapped into a two-dimensional cartesian plane using a cartographic projection. Projected coordinates are coordinates that refer to a point on a two-dimensional map that represents the surface of the Earth (i.e. projected coordinate system). Latitude and Longitude values are an example of an un-projected coordinate system. These are coordinates that directly refer to a point on the Earth's surface. One way to deal with this is by transforming the data to a planar coordinate system. In R this can be achieved via bindings to the PROJ.4 - Cartographic Projections Library (<http://trac.osgeo.org/proj/>), which are available in `rgdal`. Central to spatial data in the sp package is that they have a coordinate reference system, which is coded in object of CRS class. Central to operations on different spatial data sets is that their coordinate reference system is compatible (i.e., identical). This CRS can be a character string describing a reference system in a way understood by the PROJ.4 projection library, or a (character) missing value. An interface to the PROJ.4 library is available only if the R package rgdal is present.
+One of the challenges of working with geospatial data is that geodetic locations (points on the Earth's surface) are mapped into a two-dimensional cartesian plane using a cartographic projection. Projected coordinates are coordinates that refer to a point on a two-dimensional map that represents the surface of the Earth (i.e. projected coordinate system). Latitude and Longitude values are an example of an un-projected coordinate system. These are coordinates that directly refer to a point on the Earth's surface. One way to deal with this is by transforming the data into a planar coordinate system. In R this can be achieved via bindings to the PROJ.4 - Cartographic Projections Library (<http://trac.osgeo.org/proj/>), which is available in `rgdal`. Central to spatial data in the sp package is that they have a coordinate reference system, which is coded in an object of CRS class. Central to operations on different spatial data sets is that their coordinate reference system is compatible (i.e., identical). This CRS can be a character string describing a reference system in a way understood by the PROJ.4 projection library, or a (character) missing value. An interface to the PROJ.4 library is available only if the R package `rgdal` is present.
 
 We will transform our spatial data to the California State Plane Zone 5 (Zone V).
 
@@ -373,7 +373,7 @@ Now, we create subsequently
 circledat <- data.frame(mypointsUTM@data, row.names=c("1", "2")) circlesdf <- SpatialPolygonsDataFrame(spcircles, circledat)
 ```
 
-Similar results can be obtained using the function gBuffer of the package rgeos, as demonstrated below. Notice the use of two overlay functions from the package rgeos.
+Similar results can be obtained using the function `gBuffer` of the package `rgeos`, as demonstrated below. Notice the use of two overlay functions from the package `rgeos`.
 
 The final results can be plotted using basic R plotting commands:
 
@@ -394,7 +394,7 @@ spplot(circlesdf, zcol="Name", col.regions=c("gray60", "gray40"), sp.layout=list
 
 ![spplot example](/images/vector11.png)
 
-Try to understand how `spplot` works by breaking it down in simple steps e.g. `spplot`(circlesdf, zcol="Name", col.regions=c("gray60", "gray40"))
+Try to understand how `spplot` works by breaking it down into simple steps e.g. `spplot(circlesdf, zcol="Name", col.regions=c("gray60", "gray40"))`
 
 ```r
 ## Polygon Operations with rgeos (buffer, intersect, difference)
@@ -430,19 +430,18 @@ print(paste("The difference in area =", round(100 \* gArea(mydiff) / gArea(myint
 ## \[1\] "The difference in area = 11.05 %"
 ```
 
-If you change quadsegs to a higher number, the better the approximation. Seeing as `quadsegs`: ​Number of line segments to use to approximate a quarter circle.
+If you change `quadsegs` to a higher number, the better the approximation. Seeing as `quadsegs`: ​Number of line segments to use to approximate a quarter circle.
 
 The difference between `gIntersection` and `gDifference` is as follows:
 
-`gIntersection​`: Function for determining the intersection between the two given geometries
-
-`gDifference`​: Function for determining the difference between the two given geometries.
+- `gIntersection​`: Function for determining the intersection between the two given geometries.
+- `gDifference`​: Function for determining the difference between the two given geometries.
 
 ## Summary
 
 We learned about:
 
-- The spatial classes of the sp package
-- How to read/write data and change data format with rgdal package (`readOGR()` and `writeOGR()`)
-- Visualize spatial vector data in R and in Google Earth
-- How to perform simple operations on Geometries in R using the rgeos package
+- The spatial classes of the `sp` package
+- How to read/write data and change data format with `rgdal` package (`readOGR()` and `writeOGR()`)
+- Visualize spatial vector data in R and on Google Earth
+- How to perform simple operations on Geometries in R using the `rgeos` package

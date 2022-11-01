@@ -3,9 +3,9 @@ title: GIS Mapping
 ---
 ## Introduction
 
-There are many software solutions that will allow you to make a map. Some of them are free and open source (_e.g._ [GRASS](grass.osgeo.org/)) or not (_e.g._ [ArcGIS](http://www.arcgis.com/features/)). The argument between R and something that isn't free is pretty self explanatory, but why would we want to do our GIS tasks in R over something else like GRASS that was designed for this purpose? My usual answer is that I prefer a nice workflow all in R - I like the continuity. I also like leveraging my R programming know-how (e.g. data manipulation, loops, etc) to do complex and/or repeated operations that might take longer to click through or learn how to automate in some other program.
+There are many software solutions that will allow you to make a map. Some of them are free and open source (_e.g._ [GRASS](grass.osgeo.org/)) or not (_e.g._ [ArcGIS](http://www.arcgis.com/features/)). The argument between R and something that isn't free is pretty self-explanatory, but why would we want to do our GIS tasks in R over something else like GRASS that was designed for this purpose? My usual answer is that I prefer a nice workflow all in R - I like the continuity. I also like leveraging my R programming know-how (e.g. data manipulation, loops, etc) to do complex and/or repeated operations that might take longer to click through or learn how to automate in some other program.
 
-Really, you just need to find the right tool for the job, sometimes that will be R, other times it will be a dedicated GIS program. Also, R and GRASS can [interact](http://grasswiki.osgeo.org/wiki/R_statistics) providing an intermediate solution. All that being said, it helps to know what R can do when you're choosing your tool.
+You just need to find the right tool for the job, sometimes that will be R, and other times it will be a dedicated GIS program. Also, R and GRASS can [interact](http://grasswiki.osgeo.org/wiki/R_statistics) providing an intermediate solution. All that being said, it helps to know what R can do when you're choosing your tool.
 
 ## Load Packages
 
@@ -29,7 +29,7 @@ library(lattice)
 
 ## Getting your data off your GPS
 
-If your GPS can export to `.gpx` format, you can read the file directly as lines (i.e. `tracks`), points (i.e. `track_points`), and a few other formats you can find in the help for `readOGR`. To download and example `.gpx`, click [here](http://www.wolferonline.de/uploads/run.gpx)
+If your GPS can export to `.gpx` format, you can read the file directly as lines (i.e. `tracks`), points (i.e. `track_points`), and a few other formats you can find in the help for `readOGR`. To download the example `.gpx`, click [here](http://www.wolferonline.de/uploads/run.gpx)
 
 ```r
 run <- readOGR(dsn="run.gpx",layer="tracks")
@@ -43,7 +43,7 @@ If your GPS cannot save in `.gpx` format, you will have to resort to [GPSBabel](
 
 ## Getting a base map
 
-There are a few ways to get this type of thing in R, I'll cover many of these in a future lesson, for now let's just use a simple world map from the `maptools` package:
+There are a few ways to get this type of thing in R, I'll cover many of these in a future lesson, but for now let's just use a simple world map from the `maptools` package:
 
 ```r
 data(wrld_simpl)
@@ -77,9 +77,9 @@ I know, the map projection is not awesome, we're going to cover that in another 
 > Can you zoom in to your home town?
 >
 
-## Exporting and importing
+## Exporting and Importing
 
-Now that we know how to get a super basic map in R, let's look at how we can export and import data. This will write an ArcGIS compatible shapefile, `writeOGR()` will actually write to many different formats you just need to find the correct `driver`
+Now that we know how to get a super basic map in R, let's look at how we can export and import data. The `writeOGR()` function will write an ArcGIS compatible shapefile, in one of many different formats - you just need to find the correct driver.
 
 ```r
 writeOGR(wrld_simpl,dsn=getwd(), layer = "world_test", driver = "ESRI Shapefile", overwrite_layer = TRUE)
@@ -94,13 +94,13 @@ plot(world_shp)
 
 ## Spatial data types in R
 
-### Vector based (points, lines, and polygons)
+### Vector-based (points, lines, and polygons)
 
 Creating spatial data from scratch in R seems a little convoluted to me, but once you understand the pattern, it gets easier.
 
 #### SpatialPointsDataFrame
 
-Let's plot points on Simon Fraser University and University of Toronto.
+Let's plot points on Simon Fraser University and the University of Toronto.
 
 ```r
 coords <- matrix(c(-122.92,-79.4, 49.277,43.66),ncol=2)
@@ -152,8 +152,7 @@ plot(spdf,add=T,col='red')
 
 ## Making nicer maps
 
-The `raster` package for basic maps that interact well with spatial objects we used above, unlike many other packages, this method 'plays nice' with other spatial object from the `sp` package and can be use proper projections etc.
-We can download polygons for Canada from [GADM](http://gadm.org/about) (amongst other sources) with the country code `"CAN"`, and level=1 indicates provinces, `0` would be the whole country.
+The `raster` package for basic maps that interact well with spatial objects we used above, unlike many other packages, this method 'plays nice' with another spatial object from the `sp` package and can use proper projections. We can download polygons for Canada from [GADM](http://gadm.org/about) (amongst other sources) with the country code `"CAN"`, and level=1 indicates provinces, `0` would be the whole country.
 
 ```r
 Canada <- getData('GADM', country="CAN", level=1)
@@ -168,7 +167,7 @@ We can manipulate this `SpatialPolygonDataFrame` by looking at what is inside it
 Canada
 ```
 
-We can see that the names of the provinces are in `Canada$NAME_1`, so lets use that to extract provinces.
+We can see that the names of the provinces are in `Canada$NAME_1, so let's use that to extract provinces.
 
 ```r
 NS <- Canada[Canada$NAME_1=="Nova Scotia",]
@@ -181,7 +180,7 @@ PEI <- Canada[Canada$NAME_1=="Prince Edward Island",]
 plot(PEI,col="red",add=TRUE)
 ```
 
-Let's plot points in Moncton, Halifax and Charlottetown.
+Let's plot points in Moncton, Halifax, and Charlottetown.
 
 ```r
 coords <- matrix(cbind(lon=c(-64.77,-63.57,-63.14),lat=c(46.13,44.65,46.24)),ncol=2)
@@ -197,14 +196,14 @@ plot(spointsdf,add=TRUE,col='black',pch=16,cex=scalefactor*10)
 
 ##### The `maps` and `mapdata` packages for basic maps
 
-Coordinates which highlight the scale of the map.
+Coordinates that highlight the scale of the map.
 
 ```r
 Lat.lim=c(42.5,49)
 Long.lim=c(-69,-59)
 ```
 
-Locations of interest - these examples correspond to the tips of PEI and the provinces best city
+Locations of interest - these examples correspond to the tips of PEI and the province's best city
 
 ```r
 Site.Longs=c(-61.9,-64,-63.8)
@@ -252,7 +251,7 @@ blues <- colorRampPalette(c("darkblue", "cyan"))
 greys <- colorRampPalette(c(grey(0.4),grey(0.99)))
 ```
 
-We can query to NOAA databases for bathymetry at 1 minute resolution, but lets do 10 to keep download speeds reasonable.
+We can query the NOAA databases for bathymetry at a 1-minute resolution, but let's do 10 to keep download speeds reasonable.
 
 ```r
 atl<- getNOAA.bathy(-75,-50,30,60,resolution=10)

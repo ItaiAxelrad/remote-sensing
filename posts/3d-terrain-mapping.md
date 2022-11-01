@@ -1,6 +1,6 @@
 ---
 title: 3D Terrain Mapping
-tags: ['3d','R', 'terrain', 'mapping']
+tags: ['3d', 'R', 'terrain', 'mapping']
 ---
 *This is based on a Miles McBain post published on 2019-06-29.*
 
@@ -8,7 +8,7 @@ Slippy map tile providers (like Mapbox) can serve tiles that represent Digital E
 
 ## Mapbox API
 
-First, create a Mapbox account and generate an API access token (a ‘public’ token is also provided but not recommended for real world application). Add the API token to your `.Renviron` file (in your root directory) as:
+First, create a Mapbox account and generate an API access token (a ‘public’ token is also provided but not recommended for real-world applications). Add the API token to your `.Renviron` file (in your root directory) as:
 
 `MAPBOX_API_KEY=<YOUR_API_TOKEN>`
 
@@ -86,7 +86,7 @@ raster::plot(tibrogargan_raster)
 
 ![layers](/images/layers.png)
 
-We see this mix of layers including a psychedelic blue-green RGB landscape because in `terrain-rgb` tiles, the RGB values to provide additional precision to the elevation information. We’ll decode this in the next section.
+We see this mix of layers including a psychedelic blue-green RGB landscape because in `terrain-rgb` tiles, the RGB values provide additional precision to the elevation information. We’ll decode this in the next section.
 
 ## Converting RGB tiles to DEM tiles
 

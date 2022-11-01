@@ -1,14 +1,14 @@
 ---
-title: 'Raster Based Analysis'
+title: 'Raster-Based Analysis'
 ---
 
-The introduction of the [raster package](https://cran.r-project.org/web/packages/raster/), first developed Robert J. Hijmans, has been a revolution for geo-processing and analysis using R.
+The introduction of the [raster package](https://cran.r-project.org/web/packages/raster/), first developed by Robert J. Hijmans, has been a revolution for geo-processing and analysis using R.
 
 ## The Raster Objects
 
-The package produces and uses objects of three different classes, the `RasterLayer`, the `RasterStack` and the `RasterBrick`. A `RasterLayer` is the equivalent of a single-layer raster, as an R workspace variable. The data themselves, depending on the size of the grid can be loaded in memory or on disk. The same stands for `RasterBrick` and `RasterStack` objects, which are the equivalent of multi-layer `RasterLayer` objects. `RasterStack` and `RasterBrick` are very similar, the difference being in the virtual characteristic of the `RasterStack`. While a `RasterBrick` has to refer to one multi-layer file or is in itself a multi-layer object with data loaded in memory, a `RasterStack` may 'virtually' connect several raster objects written to different files or in memory. Processing will be more efficient for a `RasterBrick` than for a `RasterStack`, but `RasterStack` has the advantage of facilitating pixel based calculations on separate raster layers.
+The package produces and uses objects of three different classes, the `RasterLayer`, the `RasterStack`, and the `RasterBrick`. A `RasterLayer` is the equivalent of a single-layer raster, as an R workspace variable. The data themselves, depending on the size of the grid can be loaded in memory or on disk. The same stands for `RasterBrick` and `RasterStack` objects, which are the equivalent of multi-layer `RasterLayer` objects. `RasterStack` and `RasterBrick` are very similar, the difference being in the virtual character of the `RasterStack`. While a `RasterBrick` has to refer to one multi-layer file or is in itself a multi-layer object with data loaded in memory, a `RasterStack` may 'virtually' connect several raster objects written to different files or in memory. Processing will be more efficient for a `RasterBrick` than for a `RasterStack`, but `RasterStack` has the advantage of facilitating pixel-based calculations on separate raster layers.
 
-Let's take a look into the structure of these objects.
+Let's take a look at the structure of these objects.
 
 ```r
 library(raster)
@@ -28,7 +28,7 @@ r
 ## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0
 ```
 
-From the metadata displayed above, we can see that the RasterLayer object contains all the properties that geo-data should have; that is to say a projection, an extent and a pixel resolution. `RasterBrick` and `RasterStack` objects can also fairly easily be generated directly in R, as shown in the example below. Being able to generate such objects without reading them from files is particularly important for the generation of reproducible examples.
+From the metadata displayed above, we can see that the RasterLayer object contains all the properties that geo-data should have; that is to say a projection, an extent, and a pixel resolution. `RasterBrick` and `RasterStack` objects can also fairly easily be generated directly in R, as shown in the example below. Being able to generate such objects without reading them from files is particularly important for the generation of reproducible examples.
 
 ```r
 # Using the previously generated RasterLayer object
@@ -51,13 +51,13 @@ b
 ## max values : 2.854998, 5.709995, 2.854998
 ```
 
-The `RasterBrick` metadata displayed above are mostly similar to what we saw earlier for the `RasterLayer` object, with the exception that these are multi-layer objects.
+The `RasterBrick` metadata displayed above is mostly similar to what we saw earlier for the `RasterLayer` object, with the exception that these are multi-layer objects.
 
 ## Object Manipulation
 
-The actual data used in geo-processing projects often comes as geo-data, stored on files such as GeoTIFF or other commonly used file formats. Reading data directly from these files into the R working environment (as objects belonging to one of the 3 raster objects classes) is made possible thanks to the raster package. The three main commands for reading raster objects from files are the `raster()`, `stack()`, and `brick()` functions, referring to `RasterLayer`, `RasterStack` and `RasterBrick` objects respectively. Writing one of the three raster object classes to file is achieved with the `writeRaster()` function.
+The actual data used in geo-processing projects often comes as geo-data, stored on files such as GeoTIFF or other commonly used file formats. Reading data directly from these files into the R working environment (as objects belonging to one of the 3 raster objects classes) is made possible thanks to the raster package. The three main commands for reading raster objects from files are the `raster()`, `stack()`, and `brick()` functions, referring to `RasterLayer`, `RasterStack`, and `RasterBrick` objects respectively. Writing one of the three raster object classes to file is achieved with the `writeRaster()` function.
 
-To illustrate the reading and writing of raster files, we will use a sample data subsets. 'Gewata' is the name of the data set, it is a multi-layer GeoTIFF object, its file name is LE71700552001036SGS00_SR_Gewata_INT1U.tif, informing us that this is a subset from a scene acquired by the Landsat 7 sensor.
+To illustrate the reading and writing of raster files, we will use sample data subsets. 'Gewata' is the name of the data set, it is a multi-layer GeoTIFF object. Its file name is `LE71700552001036SGS00_SR_Gewata_INT1U.tif`, informing us that this is a subset from a scene acquired by the Landsat 7 sensor.
 
 ```r
 # Start by making sure that your working directory is properly set
@@ -75,7 +75,7 @@ list.files(pattern = glob2rx('*.tif'))
 list.files(pattern = '^.*\\.tif$')
 ```
 
-We can now load this object in R, since it is a multi-layer raster object, we need to use the `brick()` function to do that. Let's take a look at the structure of this object.
+We can now load this object in R since it is a multi-layer raster object, we need to use the `brick()` function to do that. Let's take a look at the structure of this object.
 
 ```r
 gewata <- brick('LE71700552001036SGS00_SR_Gewata_INT1U.tif')
@@ -91,7 +91,7 @@ gewata
 ## max values : 39, 56, 71,
 ```
 
-The metadata above informs us that the gewata object is a relatively small (593x653 pixels) `RasterBrick` with 6 layers. Similarly, single-layer objects can be read using the `raster()` function. Or if you try using the `raster()` function on a multi-layer object, by default the first layer only will be read.
+The metadata above informs us that the `gewata` object is a relatively small (593x653 pixels) `RasterBrick` with 6 layers. Similarly, single-layer objects can be read using the `raster()` function. Or if you try using the `raster()` function on a multi-layer object, by default the first layer only will be read.
 
 ```r
 gewataB1 <- raster('LE71700552001036SGS00_SR_Gewata_INT1U.tif')
@@ -107,15 +107,15 @@ gewataB1
 ## values : 4, 39 (min, max)
 ```
 
-Note that in addition to supporting most commonly used geodata formats, the raster package has its own format. Saving a file using the .grd extension ('filename.grd') will automatically save the object to the raster package format. This format has some advantages when performing geo processing in R (one advantage for instance is that it conserves original filenames as layer names in multilayer objects), however, it also has disadvantages, since those files are not compressed and thus very large, and GDAL itself does not have drivers for that file format (it is only readable by raster).
+Note that in addition to supporting the most commonly used geodata formats, the raster package has its own format. Saving a file using the .grd extension ('filename.grd') will automatically save the object to the raster package format. This format has some advantages when performing geoprocessing in R (one advantage for instance is that it conserves original filenames as layer names in multilayer objects), however, it also has disadvantages, since those files are not compressed and thus very large, and GDAL itself does not have drivers for that file format (it is only readable by raster).
 
 ### Geo Processing in Memory vs. on Disk
 
-When looking at the documentation of most functions of the raster package, you will notice that the list of arguments is almost always ended by .... which means that extra arguments can be passed to the function. Often these arguments are those that can be passed to the `writeRaster()` function; meaning that most geo-processing functions are able to write their output directly to file, on disk. This reduces the number of steps and is always a good consideration when working with big raster objects that tend to overload the memory if not written directly to file.
+When looking at the documentation of most functions of the raster package, you will notice that the list of arguments is almost always ended by .... which means that extra arguments can be passed to the function. Often these arguments are those that can be passed to the `writeRaster()` function; meaning that most geoprocessing functions can write their output directly to a file, on disk. This reduces the number of steps and is always a good consideration when working with big raster objects that tend to overload the memory if not written directly to a file.
 
 ### Data Type is (still) Important
 
-When writing files to disk using `writeRaster()` or the filename = argument in most raster processing functions, you should set an appropriate data type. Use the datatype = argument, it will save some precious disk space, and increase read and write speed. See details in `?dataType`.
+When writing files to disk using `writeRaster()` or the filename = argument in most raster processing functions, you should set an appropriate data type. Using the datatype = argument, will save some precious disk space, and increase read and write speed. See details in `?dataType`.
 
 ## Cropping a Raster Object
 
@@ -138,7 +138,7 @@ plot(gewataSub, 1)
 
 ## Creating layer stacks
 
-To end this section on general files and raster object manipulations, we will see how multi-layer objects can be created from single-layer objects. The object created as part of the example below is the same that we will use later in the course to perform time series analysis on raster objects. It is composed of NDVI layers derived from Landsat acquisitions at different dates. The objective is therefore to create a multi-layer NDVI object, for which each layer corresponds to a different date. But first we need to fetch the data, similarly to how we did it for the gewata brick.
+To end this section on general files and raster object manipulations, we will see how multi-layer objects can be created from single-layer objects. The object created as part of the example below is the same one that we will use later in the course to perform time series analysis on raster objects. It is composed of NDVI layers derived from Landsat acquisitions at different dates. The objective is therefore to create a multi-layer NDVI object, for which each layer corresponds to a different date. But first we need to fetch the data, similarly to how we did it for the gewata brick.
 
 ```r
 # Again, make sure that your working directory is properly set getwd()
@@ -155,14 +155,14 @@ The object list contains the file names of all the single layers we have to stac
 plot(raster(list\[1\]))
 ```
 
-We see an NDVI layer, with the clouds masked out. Now let's create the RasterStack, the function for doing that is called `stack()`. Looking at the help page of the function , you can see that it can accept a list of file names as argument, which is what the object list represents. So we can very simply create the layer stack by running the function.
+We see an NDVI layer, with the clouds masked out. Now let's create the RasterStack, the function for doing that is called `stack()`. Looking at the help page of the function, you can see that it can accept a list of file names as an argument, which is what the object list represents. So we can very simply create the layer stack by running the function.
 
 ```r
 turaStack <- stack(list)
 turaStack
 ```
 
-Now that we have our 166 layers `RasterStack` in memory, let's write it to disk using the `writeRaster()` function. Note that we decide here to save it as .grd file (the native format of the raster package); the reason for that is that this file format conserves original file names (in which information on dates is written) in the individual band names. The data range is comprised between -10000 and +10000, therefore such a file can be stored as signed 2 byte integer (INT2S).
+Now that we have our 166 layers `RasterStack` in memory, let's write it to disk using the `writeRaster()` function. Note that we decide here to save it as `.grd` file (the native format of the raster package); the reason for that is that this file format conserves original file names (in which information on dates is written) in the individual band names. The data range resides between -10000 and +10000, therefore such a file can be stored as a signed 2-byte integer (INT2S).
 
 ```r
 # Write this file at the root of the working directory
@@ -173,13 +173,13 @@ Now this object is stored on your computer, ready to be archived for later use.
 
 ## Simple Raster Arithmetic
 
-### Adding, subtracting, multiplying and dividing RasterLayers
+### Adding, subtracting, multiplying, and dividing RasterLayers
 
-Performing simple raster operations with raster objects is fairly easy. For instance, if you want to subtract two `RasterLayers` of same extent, r1 and r2; simply doing r1 - r2 will give the expected output, which is, every pixel value of r2 will be subtracted from the matching pixel value of r1. These types of pixel-based operations almost always require a set of conditions to be met in order to be executed; the two `RasterLayers` need to be identical in term of extent, resolution, projection, etc.
+Performing simple raster operations with raster objects is fairly easy. For instance, if you want to subtract two `RasterLayers` of the same extent, r1, and r2; simply doing r1 - r2 will give the expected output, which is, every pixel value of r2 will be subtracted from the matching pixel value of r1. These types of pixel-based operations almost always require a set of conditions to be met in order to be executed; the two `RasterLayers` need to be identical in terms of extent, resolution, projection, etc.
 
 ### Subsetting layers from RasterStack and RasterBrick
 
-Different spectral bands of a same satellite scene are often stored in multi-layer objects. This means that you will very likely import them in your R working environment as `RasterBrick` or `RasterStack` objects. As a consequence, to perform calculations between these bands, you will have to write an expression refering to individual layers of the object. Referring to individual layers in a `RasterBrick` or `RasterStack` object is done by using double square brackets \[\[\]\]. Let's look for instance at how the famous NDVI index would have to be calculated from the gewata `RasterBrick` object read earlier, and that contains the spectral bands of the Landsat 7 sensor. And in case you have forgotten, the NDVI formula is as follows (with NIR and Red being band 4 and 3 of Landsat 7 respectively):
+Different spectral bands of the same satellite scene are often stored in multi-layer objects. This means that you will very likely import them into your R working environment as `RasterBrick` or `RasterStack` objects. As a consequence, to perform calculations between these bands, you will have to write an expression referring to individual layers of the object. Referring to individual layers in a `RasterBrick` or `RasterStack` object is done by using double square brackets `\[\[\]\]`. Let's look for instance at how the famous NDVI index would have to be calculated from the gewata `RasterBrick` object read earlier, and that contains the spectral bands of the Landsat 7 sensor. And in case you have forgotten, the NDVI formula is as follows (with NIR and Red being band 4 and 3 of Landsat 7 respectively):
 
 - `NDVI = [NIR-Red/NIR+Red]`
 
@@ -194,7 +194,7 @@ The `plot()` function automatically recognizes the objects of Raster\* classes a
 
 The resulting NDVI can be viewed in the above figure. As expected the NDVI ranges from about 0.2, which corresponds to nearly bare soils, to 0.9 which means that there is some dense vegetation in the area.
 
-Although this is a quick way to perform the calculation, directly adding, subtracting, multiplying, etc, the layers of big raster objects is not recommended. When working with big objects, it is advisable to use the `calc()` function to perform these types of calculations. The reason is that R needs to load all the data first into its internal memory before performing the calculation and then runs everything in one block. It is really easy to run out of memory when doing that. A big advantage of the `calc()` function is that it has a built-in block processing option for any vectorized function, allowing such calculations to be fully "RAM friendly". The example below illustrates how to calculate NDVI from the same date set using the `calc()` function.
+Although this is a quick way to perform the calculation, directly adding, subtracting, multiplying, etc, the layers of big raster objects is not recommended. When working with big objects, it is advisable to use the `calc()` function to perform these types of calculations. The reason is that R needs to load all the data first into its internal memory before performing the calculation and then running everything in one block. It is really easy to run out of memory when doing that. A big advantage of the `calc()` function is that it has a built-in block processing option for any vectorized function, allowing such calculations to be fully "RAM friendly". The example below illustrates how to calculate NDVI from the same data set using the `calc()` function.
 
 ```r
 ## Define the function to calculate NDVI from
@@ -215,7 +215,7 @@ ndvOver <- function(x, y) {
 ndvi3 <- overlay(x=gewata\[\[3\]\], y=gewata\[\[4\]\], fun=ndvOver)
 ```
 
-We can verify that the three layers ndvi, ndvi2 and ndvi3 are actually identical using the `all.equal()` function from the raster package.
+We can verify that the three layers `ndvi`, `ndvi2`, and `ndvi3` are identical using the `all.equal()` function from the raster package.
 
 ```r
 all.equal(ndvi, ndvi2)
@@ -228,14 +228,14 @@ In the simple case of calculating NDVI, we were easily able to produce the same 
 
 ## Re-projections
 
-By the way, we still don't know where this area is. In order to investigate that, we are going to try projecting it in Google Earth. As you know Google Earth is all in Lat/Long, so we have to get our data re-projected to Lat/Long first. The `projectRaster()` function allows re-projection of raster objects to any projection one can think of. As the function uses the `PROJ.4` library (the reference library, external to R, that handles cartographic projections and performs projections transformations; the `rgdal` package is the interface between that library and R) to perform that operation, the `crs=` argument should receive a `PROJ.4` expression. `PROJ.4` expressions are strings that provide the projection parameters of cartographic projections. A central place to search for projections is the spatial reference website <http://spatialreference.org/>, from this database you will be able to query almost any reference and retrieve it in any format, including its `PROJ.4` expression.
+By the way, we still don't know where this area is. In order to investigate that, we are going to try projecting it on Google Earth. As you know Google Earth is all in Lat/Long, so we have to get our data re-projected to Lat/Long first. The `projectRaster()` function allows re-projection of raster objects to any projection one can think of. As the function uses the `PROJ.4` library (the reference library, external to R, that handles cartographic projections and performs projections transformations; the `rgdal` package is the interface between that library and R) to perform that operation, the `crs=` argument should receive a `PROJ.4` expression. `PROJ.4` expressions are strings that provide the projection parameters of cartographic projections. A central place to search for projections is the spatial reference website <http://spatialreference.org/>, from this database you will be able to query almost any reference and retrieve it in any format, including its `PROJ.4` expression.
 
 ```r
 ## One single line is sufficient to project any raster to any projection
 ndviLL <- projectRaster(ndvi, crs='+proj=longlat')
 ```
 
-Note that if re-projecting and mosaicking is really a large part of your project, you may want to consider using the `gdalwarp` command line utility (`gdalwarp`) directly. The `gdalUtils` R package provides utilities to run `GDAL` commands from R, including `gdalwarp`, for reprojection, resampling and mosaicking.
+Note that if re-projecting and mosaicing is a substantial part of your project, you may want to consider using the `gdalwarp` command line utility (`gdalwarp`) directly. The `gdalUtils` R package provides utilities to run `GDAL` commands from R, including `gdalwarp`, for re-projection, resampling, and mosaicing.
 
 Now that we have our NDVI layer in Lat/Long, let's write it to a KML file, which is one of the two Google Earth formats.
 
@@ -249,17 +249,17 @@ getwd()
 KML(x=ndviLL, filename='gewataNDVI.kml')
 ```
 
-Note that you need to have Google Earth installed on your system in order to perform the following step. Now let's find that file that we have just written and double click it, and watch how Google Earth brings us all the way to ... Ethiopia. More information will come later in the course about that specific area.
+Note that you need to have Google Earth installed on your system to perform the following step. Now let's find that file that we have just written and double-click it, and watch how Google Earth brings us all the way to ... Ethiopia. More information will come later in the course about that specific area.
 
 We are done with this data set for this lesson. So let's explore another data set, from the Landsat sensors. This dataset will allow us to find other interesting raster operations to perform.
 
 ## More raster arithmetics: performing simple value replacements
 
-Since 2014, the USGS has started releasing Landsat data processed to surface reflectance. This means that they are taking care of important steps such as atmospheric correction and conversion from sensor radiance to reflectance factors. Additionally, they provide a cloud mask with this product. The cloud mask is an extra raster layer, at the same resolution as the surface reflectance bands, that contains information about the presence or absence of cloud as well as shadowing effects from the clouds. The cloud mask of Landsat surface reflectance product is named `cfmask`, after the name of the algorithm used to detect the clouds. For more information about cloud detection, see the algorithm page, and the publication by `@zhu2012object`. In the following section we will use that `cfmask` layer to mask out remaining clouds in a Landsat scene.
+Since 2014, the USGS has started releasing Landsat data processed to surface reflectance. This means that they are taking care of important steps such as atmospheric correction and conversion from sensor radiance to reflectance factors. Additionally, they provide a cloud mask with this product. The cloud mask is an extra raster layer, at the same resolution as the surface reflectance bands, that contains information about the presence or absence of clouds as well as shadowing effects from the clouds. The cloud mask of Landsat surface reflectance product is named `cfmask`, after the name of the algorithm used to detect the clouds. For more information about cloud detection, see the algorithm page, and the publication by `@zhu2012object`. In the following section, we will use that `cfmask` layer to mask out the remaining clouds in a Landsat scene.
 
 ### About the area
 
-The area selected for this exercise covers most of the South Pacific island of Tahiti, French Polynesia. It is a mountainous, volcanic island, and according to Wikipedia about 180,000 people live on the island. For convenience, the Landsat scene was subsetted to cover only the area of interest and is stored online.
+The area selected for this exercise covers most of the South Pacific island of Tahiti, French Polynesia. It is a mountainous, volcanic island, and according to Wikipedia, about 180,000 people live on the island. For convenience, the Landsat scene was subsetted to cover only the area of interest and is stored online.
 
 ```r
 ## Download the data
@@ -284,7 +284,7 @@ plot(tahiti, 7)
 
 ![cloud mask layer](/images/cloud_mask_layer.png)
 
-According to the algorithm description, water is coded as 1, cloud as 4 and cloud shadow as 2. Does the cloud mask fit with the visual interpretation of the RGB image we plotted before? We can also plot the two on top of each other, but before that we need to assign no values (NA) to the 'clear land pixels' so that they appear transparent on the overlay plot.
+According to the algorithm description, water is coded as 1, cloud as 4, and cloud shadow as 2. Does the cloud mask fit with the visual interpretation of the RGB image we plotted before? We can also plot the two on top of each other, but before that, we need to assign no values (NA) to the 'clear land pixels' so that they appear transparent on the overlay plot.
 
 ```r
 ## Extract cloud layer from the brick
@@ -298,7 +298,7 @@ plot(cloud, add = TRUE, legend = FALSE)
 
 ![Plot of the stack and the cloud mask on top of each other](/images/stack-cloud-plot.png)
 
-Applying a cloud mask to a dataset simply consists in performing value replacement. In this case, a condition on the 7th layer of the stack (the `fmask` layer) will determine whether values in the other layers are kept, or replaced by NA, which is equivalent to masking them. It is more convenient to work on the cloud mask as a separate RasterLayer, we will therefore split the RasterBrick using the dropLayer() function.
+Applying a cloud mask to a dataset simply consists in performing value replacement. In this case, a condition on the 7th layer of the stack (the `fmask` layer) will determine whether values in the other layers are kept, or replaced by NA, which is equivalent to masking them. It is more convenient to work on the cloud mask as a separate RasterLayer, we will therefore split the RasterBrick using the `dropLayer()` function.
 
 ```r
 ## Extract cloud mask RasterLayer
@@ -307,14 +307,14 @@ fmask <- tahiti\[\[7\]\]
 tahiti6 <- dropLayer(tahiti, 7)
 ```
 
-We will first do the masking using simple vector arithmetic, as if tahiti6 and `fmask` were simple vectors. We want to keep any value with a 'clean land pixel' flag in the cloud mask; or rather, since we are assigning NAs, we want to discard any value of the stack which has a corresponding cloud mask pixel different from 0. This can be done in one line of code.
+We will first do the masking using simple vector arithmetic as if `tahiti6` and `fmask` were simple vectors. We want to keep any value with a 'clean land pixel' flag in the cloud mask; or rather, since we are assigning NAs, we want to discard any value of the stack which has a corresponding cloud mask pixel different from 0. This can be done in one line of code.
 
 ```r
 ## Perform value replacement
 tahiti6\[fmask != 0\] <- NA
 ```
 
-However, this is possible here because both objects are relatively small and the values can all be loaded in the computer memory without any risk of overloading it. When working with very large raster objects, you will very likely run into problems if you do that. It is then preferable, as presented earlier in this tutorial to use `calc()` or `overlay()`. `overlay()` in this case is the appropriate function, since we are working with two distinct raster objects.
+However, this is possible here because both objects are relatively small and the values can all be loaded into the computer memory without any risk of overloading it. When working with very large raster objects, you will very likely run into problems if you do that. It is then preferable, as presented earlier in this tutorial to use `calc()` or `overlay()`. `overlay()` in this case is the appropriate function since we are working with two distinct raster objects.
 
 ```r
 ## First define a value replacement function
@@ -341,7 +341,7 @@ There are holes in the image, but at least the clouds are gone. We could use ano
 
 ## Summary
 
-Today you got a general introduction to the raster package, its basic functions, its object classes and methods. They can be categorized as follows:
+Today you got a general introduction to the raster package, its basic functions, its object classes, and methods. They can be categorized as follows:
 
 ### Raster classes
 
@@ -352,13 +352,13 @@ Today you got a general introduction to the raster package, its basic functions,
 
 #### Read data
 
-- `raster()`: Read a single-layer raster object written on disk, or read the first layer of a multi layer object.
+- `raster()`: Read a single-layer raster object written on disk or read the first layer of a multi-layer object.
 - `brick()`: Read a multi-layer raster object written on disk.
 
 #### Write data
 
 - `writeRaster()`: Write a `RasterLayer`, `RasterBrick` or `RasterStack` to disk.
-- `filename = argument`: Available for most functions of the raster package that produce raster objects, write directly the output of the function to disk.
+- `filename = argument`: available for most functions of the raster package that produce raster objects, write directly the output of the function to disk.
 
 #### Reformat data
 
@@ -369,7 +369,7 @@ Today you got a general introduction to the raster package, its basic functions,
 
 #### Simple visualization
 
-- `plot()`: Plot a raster object, use `add = TRUE` to overlay several objects.
+- `plot()`: Plot a raster object, using `add = TRUE` to overlay several objects.
 - `plotRGB()`: Plot an RGB color composite
 
 ### Raster calculations

@@ -1,19 +1,19 @@
 ---
 title: 'Advanced Raster Analysis: Classification'
 ---
-In this example we will publish a documented report using R, carry out a supervised and unsupervised classification on a series of raster layers, construct a raster sieve using the `clump()` function and work with thematic (categorical maps).
+In this example, we will publish a documented report using R, carry out a supervised and unsupervised classification on a series of raster layers, construct a raster sieve using the `clump()` function, and work with thematic (categorical maps).
 
 ## Introduction to Landsat data
 
-Since being released to the public, the Landsat data archive has become an invaluable tool for environmental monitoring. With a historical archive reaching back to the 1970's, the release of these data has resulted in a spur of time series based methods. In this tutorial, we will work with time series data from the Landsat 7 Enhanced Thematic Mapper (ETM+) sensor. Landsat scenes are delivered via the USGS as a number of image layers representing the different bands captured by the sensors. In the case of the Landsat 7 Enhanced Thematic Mapper (ETM+) sensor, the bands are shown in the figure below. Using different combination of these bands can be useful in describing land features and change processes.
+Since being released to the public, the Landsat data archive has become an invaluable tool for environmental monitoring. With a historical archive reaching back to the 1970s, the release of these data has resulted in a spur of time series-based methods. In this tutorial, we will work with time series data from the Landsat 7 Enhanced Thematic Mapper (ETM+) sensor. Landsat scenes are delivered via the USGS as several image layers representing the different bands captured by the sensors. In the case of the Landsat 7 Enhanced Thematic Mapper (ETM+) sensor, the bands are shown in the figure below. Using different combinations of these bands can be useful in describing land features and change processes.
 
 ## Landsat 7 ETM+ bands
 
-Part of a landsat scene, including bands 2-4 are included in the data provided here. These data have been processed using the LEDAPS framework, so the values contained in this dataset represent surface reflectance, scaled by 10000 (ie. divide by 10000 to get a reflectance value between 0 and 1).
+Part of a Landsat scene, including bands 2-4 is included in the data provided here. These data have been processed using the LEDAPS framework, so the values contained in this dataset represent surface reflectance, scaled by 10000 (ie. divide by 10000 to get a reflectance value between 0 and 1).
 
 We will begin exploring these data simply by downloading and visualizing them:
 
-To download the data you can clone this Github repository (<https://github.com/itaiaxelrad/remote-sensing>) to your local computer. All the required datasets are located within the data folder.
+To download the data you can clone this GitHub repository (<https://github.com/itaiaxelrad/remote-sensing>) to your local computer. All the required datasets are located within the data folder.
 
 ```r
 ## Libraries
@@ -39,7 +39,7 @@ gewata <- brick(GewataB2, GewataB3, GewataB4)
 hist(gewata)
 ```
 
-When we plot the histogram of the RasterBrick, the scales of the axes and the bin sizes are not equivalent, which could be problematic. This can be solved by adjusting these parameters in `hist()`, which requires extra consideration. The raster `hist()` function inherits arguments from the function of the same name from the graphics package. To view additional arguments, type: `?graphics::hist`. To ensure that our histograms are of the same scale, we should consider the `xlim`, `ylim` and breaks arguments.
+When we plot the histogram of the RasterBrick, the scales of the axes and the bin sizes are not equivalent, which could be problematic. This can be solved by adjusting these parameters in `hist()`, which requires extra consideration. The raster `hist()` function inherits arguments from the function of the same name from the graphics package. To view additional arguments, type: `?graphics::hist`. To ensure that our histograms are of the same scale, we should consider the `xlim`, `ylim`, and breaks arguments.
 
 ```r
 # reset plotting window
@@ -49,7 +49,7 @@ hist(gewata, xlim = c(0, 5000), ylim = c(0, 750000), breaks = seq(0, 5000, by = 
 
 Note that the values of these bands have been rescaled by a factor of 10000. This is done for file storage considerations. For example, a value of 0.5643 stored as a float takes up more disk space than a value of 5643 stored as an integer. If you prefer reflectance values in their original scale (from 0 to 1), this can easily be done using raster algebra or `calc()`.
 
-A scatterplot matrix can be helpful in exploring relationships between raster layers. This can be done with the pairs() function of the raster package, which (like `hist()`) is a wrapper for the same function found in the graphics packages.
+A scatterplot matrix can help explore relationships between raster layers. This can be done with the pairs() function of the raster package, which (like `hist()`) is a wrapper for the same function found in the graphics packages.
 
 ```r
 pairs(gewata)
@@ -57,22 +57,21 @@ pairs(gewata)
 
 Note that both `hist()` and `pairs()` compute histograms and scatterplots based on a random sample of raster pixels. The size of this sample can be changed with the argument `maxpixels` in either function.
 
-Calling `pairs()` on a RasterBrick reveals potential correlations between the layers themselves. In the case of bands 2-4 of the gewata subset, we can see that band 2 and 3 (in the visual part of the EM spectrum) are highly correlated, while band 4 contains significant non redundant information.
+Calling `pairs()` on a RasterBrick reveals potential correlations between the layers themselves. In the case of bands 2-4 of the gewata subset, we can see that bands 2 and 3 (in the visual part of the EM spectrum) are highly correlated, while band 4 contains significant non-redundant information.
 
-In the case of bands 2-4 of the gewata subset, we can see that band 2 and 3 (in the visual part of the EM spectrum) are highly correlated, while band 4 contains significant non- redundant information. ETM+ band 4 (nearly equivalent to band 5 in the Landsat 8 OLI sensor) is situated in the near infrared (NIR) region of the EM spectrum and is often used to describe vegetation-related features. We observe a strong correlation between two of the Landsat bands of the gewata subset, but a very different distribution of values in band 4 (NIR). This distribution stems from the fact that vegetation reflects very highly in the NIR range, compared to the visual range of the EM
-spectrum. A commonly used metric for assessing vegetation dynamics, the normalized difference vegetation index (NDVI), which takes advantage of this fact and is computed from Landsat bands 3 (visible red) and 4 (near infrared).
+In the case of bands 2-4 of the gewata subset, we can see that bands 2 and 3 (in the visual part of the EM spectrum) are highly correlated, while band 4 contains significant non-redundant information. ETM+ band 4 (nearly equivalent to band 5 in the Landsat 8 OLI sensor) is situated in the near-infrared (NIR) region of the EM spectrum and is often used to describe vegetation-related features. We observe a strong correlation between two of the Landsat bands of the gewata subset, but a very different distribution of values in band 4 (NIR). This distribution stems from the fact that vegetation reflects very highly in the NIR range, compared to the visual range of the EM spectrum. A commonly used metric for assessing vegetation dynamics is the normalized difference vegetation index (NDVI), which takes advantage of this fact and is computed from Landsat bands 3 (visible red) and 4 (near infrared).
 
 We observe a strong correlation between two of the Landsat bands of the gewata subset, but a very different distribution of values in band 4 (NIR). This distribution stems from the fact that vegetation reflects very highly in the NIR range, compared to the visual range of the EM spectrum. A commonly used metric for assessing vegetation dynamics, the normalized difference vegetation index (NDVI), explained in the previous lesson, takes advantage of this fact and is computed from Landsat bands 3 (visible red) and 4 (near infra-red).
 
-There are several ways to calculate NDVI, using direct raster algebra, `calc()` or `overlay()`. Since we will be using NDVI again later in this tutorial, let's calculate it again and store it in our workspace using `overlay()`.
+There are several ways to calculate NDVI, using direct raster algebra, `calc()`, or `overlay()`. Since we will be using NDVI again later in this tutorial, let's calculate it again and store it in our workspace using `overlay()`.
 
 `ndvi <- overlay(GewataB4, GewataB3, fun=function(x,y){(x\-y)/(x+y)}) plot(ndvi)`
 
-Aside from the advantages of `calc()` and `overlay()` regarding memory usage, an additional advantage of these functions is the fact that the result can be written immediately to file by including the filename = "..." argument, which will allow you to write your results to file immediately, after which you can reload in subsequent sessions without having to repeat your analysis.
+Aside from the advantages of `calc()` and `overlay()` regarding memory usage, an additional advantage of these functions is the fact that the result can be written immediately to a file by including the filename = "..." argument, which will allow you to write your results to file immediately, after which you can reload in subsequent sessions without having to repeat your analysis.
 
 ### Classifying Raster Data
 
-One of the most important tasks in analysis of remote sensing image analysis is image classification. In classifying the image, we take the information contained in the various bands (possibly including other synthetic bands such as NDVI or principal components). In this tutorial we will explore two approaches for image classification:
+One of the most important tasks in the analysis of remote sensing image analysis is image classification. In classifying the image, we take the information contained in the various bands (possibly including other synthetic bands such as NDVI or principal components). In this tutorial we will explore two approaches for image classification:
 
 - supervised (random forest) classification,
 - unsupervised (k-means).
@@ -81,13 +80,13 @@ One of the most important tasks in analysis of remote sensing image analysis is 
 
 The Random Forest classification algorithm is an ensemble learning method that is used for both classification and regression. In our case, we will use the method for classification purposes. Here, the random forest method takes random subsets from a training dataset and constructs classification trees using each of these subsets. Trees consist of branches and leaves.
 
-Branches represent nodes of the decision trees, which are often thresholds defined for the measured (known) variables in the dataset. Leaves are the class labels assigned at the termini of the trees. Sampling many subsets at random will result in many trees being built. Classes are then assigned based on classes assigned by all of these trees based on a majority rule, as if each class assigned by a decision tree were considered to be a vote.
+Branches represent nodes of the decision trees, which are often thresholds defined for the measured (known) variables in the dataset. Leaves are the class labels assigned at the termini of the trees. Sampling many subsets at random will result in many trees being built. Classes are then assigned based on classes assigned by all of these trees based on a majority rule as if each class assigned by a decision tree were considered to be a vote.
 
-One major advantage of the Random Forest method is the fact that an Out of the Bag (OOB) error estimate and an estimate of variable performance are performed. For each classification tree assembled, a fraction of the training data are left out and used to compute the error for each tree by predicting the class associated with that value and comparing with the already known class. This process results in a confusion matrix, which we will explore in our analysis. In addition an importance score is computed for each variable in two forms: the mean decrease in accuracy for each variable, and the Gini impurity criterion, which will also be explored in our analysis.
+One major advantage of the Random Forest method is the fact that an Out of the Bag (OOB) error estimate and an estimate of variable performance are performed. For each classification tree assembled, a fraction of the training data is left out and used to compute the error for each tree by predicting the class associated with that value and comparing it with the already known class. This process results in a confusion matrix, which we will explore in our analysis. In addition, an importance score is computed for each variable in two forms: the mean decrease in accuracy for each variable, and the Gini impurity criterion, which will also be explored in our analysis.
 
-We should first prepare the data on which the classification will be done. So far, we have prepared three bands from a ETM+ image in 2001 (bands 2, 3 and 4) as a RasterBrick, and have also calculated NDVI. In addition, there is a Vegetation Continuous Field (VCF) product available for the same period (2000).
+We should first prepare the data on which the classification will be done. So far, we have prepared three bands from an ETM+ image in 2001 (bands 2, 3, and 4) as a RasterBrick, and have also calculated NDVI. In addition, there is a Vegetation Continuous Field (VCF) product available for the same period (2000).
 
-For more information on the Landsat VCF product, see here. This product is also based on Landsat ETM+ data, and represents an estimate of tree cover (in %). Since this layer could also be useful in classifying land cover types, we will also include it as a potential covariate in the Random Forest classification.
+For more information on the Landsat VCF product, see here. This product is also based on Landsat ETM+ data and represents an estimate of tree cover (in %). Since this layer could also be useful in classifying land cover types, we will also include it as a potential covariate in the Random Forest classification.
 
 ## Load the data and check it out
 
@@ -113,7 +112,7 @@ summary(vcfGewata)
 hist(vcfGewata)
 ```
 
-In the `vcfGewata` `rasterLayer` there are some values much greater than 100 (the maximum tree cover), which are flags for water, cloud or cloud shadow pixels. To avoid these values, we can assign a value of NA to these pixels so they are not used in the classification.
+In the `vcfGewata` and `rasterLayer` there are some values much greater than 100 (the maximum tree cover), which are flags for water, clouds, or cloud shadow pixels. To avoid these values, we can assign a value of NA to these pixels so they are not used in the classification.
 
 ```r
 vcfGewata\[vcfGewata \> 100\] <- NA
@@ -129,9 +128,9 @@ summary(vcfGewata)
 hist(vcfGewata)
 ```
 
-To perform the classification in R, it is best to assemble all covariate layers (ie. those layers contaning predictor variable values) into one `RasterBrick` object. In this case, we can simply append these new layers (NDVI and VCF) to our existing `RasterBrick` (currently consisting of bands 2, 3, and 4).
+To perform the classification in R, it is best to assemble all covariate layers (ie. those layers containing predictor variable values) into one `RasterBrick` object. In this case, we can simply append these new layers (NDVI and VCF) to our existing `RasterBrick` (currently consisting of bands 2, 3, and 4).
 
-First, let's rescale the original reflectance values to their original scale. This step is not required for the RF classification, but it might help with the interpretation, if you are used to thinking of reflectance as a value between 0 and 1. (On the other hand, for very large raster bricks, it might be preferable to leave them in their integer scale, but we won't go into more detail about that here.)
+First, let's rescale the original reflectance values to their original scale. This step is not required for the RF classification, but it might help with the interpretation if you are used to thinking of reflectance as a value between 0 and 1. (On the other hand, for very large raster bricks, it might be preferable to leave them in their integer scale, but we won't go into more detail about that here.)
 
 ```r
 gewata <- calc(gewata, fun=function(x) x / 10000)
@@ -147,7 +146,7 @@ names(covs) <- c("band2", "band3", "band4", "NDVI", "VCF")
 plot(covs)
 ```
 
-For this example, we will do a very simple classification for 2001 using three classes: forest, cropland and wetland. While for other purposes it is usually better to define more classes (and possibly fuse classes later), a simple classification like this one could be useful, for example, to construct a forest mask for the year 2001.
+For this example, we will do a very simple classification for 2001 using three classes: forest, cropland, and wetland. While for other purposes it is usually better to define more classes (and possibly fuse classes later), a simple classification like this one could be useful, for example, to construct a forest mask for the year 2001.
 
 ```r
 # Load the training polygons
@@ -157,7 +156,7 @@ plot(ndvi)
 plot(trainingPoly, add = TRUE)
 ```
 
-The training classes are labelled as string labels. For this example, we will need to work with integer classes, so we will need to first 'relabel' our training classes. There are several approaches that could be used to convert these classes to integer codes. In this case, we will first make a function that will reclassify the character strings representing land cover classes into integers based on the existing factor levels.
+The training classes are labeled as string labels. For this example, we will need to work with integer classes, so we will need to first 'relabel' our training classes. Several approaches could be used to convert these classes to integer codes. In this case, we will first make a function that will reclassify the character strings representing land cover classes into integers based on the existing factor levels.
 
 ```r
 ## Inspect the data slot of the trainingPoly object
@@ -252,14 +251,14 @@ trainingbrick <- addLayer(covmasked, classes)
 plot(trainingbrick)
 ```
 
-Now it's time to add all of these values to a data.frame representing all training data. This data.frame will be used as an input into the RandomForest classification function. We will use `getValues()` to extract all of the values from the layers of the RasterBrick.
+Now it's time to add all of these values to a data frame representing all training data. This data frame will be used as input for the `RandomForest` classification function. We will use `getValues()` to extract all of the values from the layers of the `RasterBrick`.
 
 ```r
 ## Extract all values into a matrix
 valuetable <- getValues(trainingbrick)
 ```
 
-If you print value table to the console, you will notice that a lot of the rows are filled with NA. This is because all raster cell values have been taken, include those with NA values. We can get rid of these rows by using the `na.omit()` function.
+If you print a value table to the console, you will notice that a lot of the rows are filled with NA. This is because all raster cell values have been taken, including those with NA values. We can get rid of these rows by using the `na.omit()` function.
 
 ```r
 valuetable <- na.omit(valuetable)
@@ -298,13 +297,13 @@ tail(valuetable, n = 10)
 ## 36220 0.0429 0.0293 0.2434 0.7851118 73 2
 ```
 
-Now that we have our training dataset as a data.frame, let's convert the class column into a factor (since the values as integers don't really have a meaning).
+Now that we have our training dataset as a data frame, let's convert the class column into a factor (since the values as integers don't have a meaning).
 
 ```r
 valuetable$class <- factor(valuetable$class, levels = c(1:3))
 ```
 
-Now we have a convenient reference table which contains, for each of the three defined classes, all known values for all covariates. Let's visualize the distribution of some of these covariates for each class. To make this easier, we will create 3 different data.frames for each of the classes. This is just for plotting purposes, and we will not use these in the actual classification.
+Now we have a convenient reference table that contains, for each of the three defined classes, all known values for all covariates. Let's visualize the distribution of some of these covariates for each class. To make this easier, we will create 3 different data frames for each of the classes. This is just for plotting purposes, and we will not use these in the actual classification.
 
 ```r
 val_crop <- subset(valuetable, class \== 1)
@@ -336,7 +335,7 @@ Try to produce the same scatterplot plot as in #3 looking at the relationship be
 
 We can see from these distributions that these covariates may do well in classifying forest pixels, but we may expect some confusion between cropland and wetland (although the individual bands may help to separate these classes). When performing this classification on large datasets and with a large amount of training data, now may be a good time to save this table using the `write.csv()` command, in case something goes wrong after this point and you need to start over again.
 
-Now it is time to build the Random Forest model using the training data contained in the table of values we just made. For this, we will use the randomForest package in R, which is an excellent resource for building such types of models. Using the `randomForest()` function, we will build a model based on a matrix of predictors or covariates (ie. the first 5 columns of valuetable) related to the response (the class column of valuetable).
+Now it is time to build the Random Forest model using the training data contained in the table of values we just made. For this, we will use the randomForest package in R, which is an excellent resource for building such types of models. Using the `randomForest()` function, we will build a model based on a matrix of predictors or covariates (ie. the first 5 columns of `valuetable`) related to the response (the class column of `valuetable`).
 
 ```r
 ## Construct a random forest model
@@ -349,9 +348,9 @@ modelRF <- randomForest(x=valuetable\[ ,c(1:5)\], y=valuetable$class,  importanc
 ## Type rfNews() to see new features/changes/bug fixes
 ```
 
-Since the random forest method involves the building and testing of many classification trees (the 'forest'), it is a computationally expensive step (and could take a lot of memory for especially large training datasets). When this step is finished, it would be a good idea to save the resulting object with the `save()` command. Any R object can be saved as an .rda file and reloaded into future sessions using `load()`.
+Since the random forest method involves the building and testing of many classification trees (the 'forest'), it is a computationally expensive step (and could take a lot of memory for especially large training datasets). When this step is finished, it would be a good idea to save the resulting object with the `save()` command. Any R object can be saved as an `.rda` file and reloaded into future sessions using `load()`.
 
-The resulting object from the `randomForest()` function is a specialized object of class randomForest, which is a large list-type object packed full of information about the model output. Elements of this object can be called and inspected like any list object.
+The resulting object from the `randomForest()` function is a specialized object of class `randomForest`, which is a large list-type object packed full of information about the model output. Elements of this object can be called and inspected like any list object.
 
 ```r
 ## Inspect the structure and element names of the resulting model modelRF
@@ -379,13 +378,15 @@ The figure above shows the variable importance plots for a Random Forest model s
 
 These two plots give two different reports on variable importance (see `?importance()`).
 
-First, the mean decrease in accuracy indicates the amount by which the classification accuracy decreased based on the OOB assessment. Second, the Gini impurity coefficient gives a measure of class homogeneity. More specifically, the decrease in the Gini impurity coefficient when including a particular variable is shown in the plot. From Wikipedia: "Gini impurity is a measure of how often a randomly chosen element from the set would be incorrectly labeled if it were randomly labeled according to the distribution of labels in the subset".
+First, the mean decrease in accuracy indicates the amount by which the classification accuracy decreased based on the OOB assessment. Second, the Gini impurity coefficient gives a measure of class homogeneity. More specifically, the decrease in the Gini impurity coefficient when including a particular variable is shown in the plot. From Wikipedia:
 
-In this case, it seems that Gewata bands 3 and 4 have the highest impact on accuracy, while bands 3 and 2 score highest with the Gini impurity criterion. For especially large datasets, it may be helpful to know this information, and leave out less important variables for subsequent runs of the `randomForest()` function.
+> "Gini impurity is a measure of how often a randomly chosen element from the set would be incorrectly labeled if it were randomly labeled according to the distribution of labels in the subset".
+
+In this case, it seems that Gewata bands 3 and 4 have the highest impact on accuracy, while bands 3 and 2 score highest with the Gini impurity criterion. For especially large datasets, it may be helpful to know this information and leave out less important variables for subsequent runs of the `randomForest()` function.
 
 Since the VCF layer included NAs (which have also been excluded in our results) and scores relatively low according to the mean accuracy decrease criterion, we can construct an alternate Random Forest model as above, but excluding this layer. We may exclude NAs by using the `na.omit()` function. The accuracy, as seen in the comparison of confusion matrices, is increased by removing of NAs. Using the `system.time()` function, one could tell that by excluding NAs the processing time has decreased.
 
-Now we can apply this model to the rest of the image and assign classes to all pixels. Note that for this step, the names of the raster layers in the input brick (here covs) must correspond exactly to the column names of the training table. We will use the `predict()` function from the raster package to predict class values based on the random forest model we have just constructed. This function uses a pre-defined model to predict values of raster cells based on other raster layers. This model can be derived by a linear regression, for example. In our case, we will use the model provided by the `randomForest()` function we applied earlier.
+Now we can apply this model to the rest of the image and assign classes to all pixels. Note that for this step, the names of the raster layers in the input brick (here covs) must correspond exactly to the column names of the training table. We will use the `predict()` function from the raster package to predict class values based on the random forest model we have just constructed. This function uses a pre-defined model to predict the values of raster cells based on other raster layers. This model can be derived by linear regression, for example. In our case, we will use the model provided by the `randomForest()` function we applied earlier.
 
 ```r
 ## Double-check layer and column names to make sure they match names(covs)
@@ -410,18 +411,18 @@ Note that the `predict()` function also takes arguments that can be passed to `w
 
 ## Unsupervised classification: k-means
 
-In the absence of training data, an unsupervised classification can be carried out. Unsupervised classification methods assign classes based on inherent structures in the data without resorting to training of the algorithm. One such method, the k-means method, divides data into clusters based on Euclidean distances from cluster means in a feature space.
+In the absence of training data, an unsupervised classification can be carried out. Unsupervised classification methods assign classes based on inherent structures in the data without resorting to the training of the algorithm. One such method, the k-means method, divides data into clusters based on Euclidean distances from cluster means in a feature space.
 
 ### More information on the theory behind k-means clustering
 
-We will use the same layers (from the covs rasterBrick) as in the Random Forest classification for this classification example. As before, we need to extract all values into a data.frame. But this time we will extract all values, since we are not limited to a training dataset.
+We will use the same layers (from the covs `rasterBrick`) as in the Random Forest classification for this classification example. As before, we need to extract all values into a `data.frame`. But this time we will extract all the values since we are not limited to a training dataset.
 
 ```r
 valuetable <- getValues(covs)
 head(valuetable)
 ```
 
-Now we will construct a kmeans object using the `kmeans()` function. Like the Random Forest model, this object packages useful information about the resulting class membership. In this case, we will set the number of clusters to three, presumably corresponding to the three classes defined in our random forest classification.
+Now we will construct a `kmeans` object using the `kmeans()` function. Like the Random Forest model, this object packages useful information about the resulting class membership. In this case, we will set the number of clusters to three, presumably corresponding to the three classes defined in our random forest classification.
 
 ```r
 km <- kmeans(na.omit(valuetable), centers = 3, iter.max = 100, nstart = 10)
@@ -434,7 +435,7 @@ unique(km$cluster) # displays unique values
 
 As in the Random Forest classification, we used the `na.omit()` argument to avoid any NA values in the valuetable (recall that there is a region of NAs in the VCF layer). These NAs are problematic in the `kmeans()` function, but omitting them gives us another problem: the resulting vector of clusters (from 1 to 3) is shorter than the actual number of cells in the raster.
 
-In other words, how do we know which clusters to assign to which cells? To answer that question, we need to have a kind of mask raster, indicating where the NA values throughout the cov RasterBrick are located.
+In other words, how do we know which clusters to assign to which cells? To answer that question, we need to have a kind of mask raster, indicating where the NA values throughout the cov `RasterBrick` are located.
 
 ```r
 ## Create a blank raster with default values of 0
@@ -448,7 +449,7 @@ for(i in 1:nlayers(covs)){
 rNA <- getValues(rNA)
 ```
 
-We now have a vector indicating with a value of 1 where the NA's in the cov brick are. Now that we know where the 'original' NAs are located, we can go ahead and assign the cluster values to a raster. At these NA locations, we will not assign any of the cluster values, instead assigning an NA.
+We now have a vector with a value of 1 indicating where the NA's in the cov brick are. Now that we know where the 'original' NAs are located, we can go ahead and assign the cluster values to a raster. At these NA locations, we will not assign any of the cluster values, instead assigning an NA.
 
 First, we will insert these values into the original valuetable `data.frame`.
 
@@ -538,11 +539,11 @@ par(opar)
 # reset plotting window
 ```
 
-We have successfully removed all island pixels from the forest mask using the `clump()` function. We can adjust our sieve criteria to only directly adjacent (NESW) neighbours: the so-called Rook's Case. To accomplish this, simply repeat the code above, but supply the argument directions=4 when calling `clump()`.
+We have successfully removed all island pixels from the forest mask using the `clump()` function. We can adjust our sieve criteria to only directly adjacent (NESW) neighbors: the so-called Rook's Case. To accomplish this, simply repeat the code above, but supply the argument directions=4 when calling `clump()`.
 
 We could take this approach further and apply a minimum mapping unit (MMU) to our forest mask.
 
-We can adjust the above sieve to remove all forest pixels with area below 0.5 hectares by using the count column of this frequency table to select clump IDs with 5.55 pixels (see computation below).
+We can adjust the above sieve to remove all forest pixels with areas below 0.5 hectares by using the count column of this frequency table to select clump IDs with 5.55 pixels (see computation below).
 
   0.5 hectares = 1⁄2*(10,000 m2) = 5,000 m2
   1 px = 30m*30m = 900 m2
@@ -572,7 +573,7 @@ freq(lulcGewata)
 hist(lulcGewata)
 ```
 
-This is a raster with integer values between 1 and 6, but for this raster to be meaningful at all, we need a lookup or attribute table to identify these classes. A data.frame defining these classes is also included in the lesson repository:
+This is a raster with integer values between 1 and 6, but for this raster to be meaningful at all, we need a lookup or attribute table to identify these classes. A `data.frame` defining these classes is also included in the lesson repository:
 
 ```r
 load("data/LUTGewata.rda")
@@ -587,7 +588,7 @@ LUTGewata
 ## 6 6 wetland
 ```
 
-This `data.frame` represents a lookup table for the raster we just loaded. The $ID column corresponds to the values taken on by the lulc raster, and the $Class column describes the LULC classes assigned. In R it is possible to add an attribute table to a raster. In order to do this, we need to coerce the raster values to a factor from an integer and add a raster attribute table.
+This `data.frame` represents a lookup table for the raster we just loaded. The `\$ID` column corresponds to the values taken on by the LULC raster, and the `\$Class` column describes the LULC classes assigned. In R it is possible to add an attribute table to a raster. To do this, we need to coerce the raster values to a factor from an integer and add a raster attribute table.
 
 ```r
 lulc <- as.factor(lulcGewata)
@@ -616,7 +617,7 @@ names(classes) <- LUTGewata$Class
 plot(classes, legend=FALSE)
 ```
 
-Now each class is represented by a separate layer representing class membership of each pixel with 0's and 1's. If we want to construct a forest mask as we did above, this is easily done by extracting the fifth layer of this RasterBrick and replacing 0's with NA's.
+Now each class is represented by a separate layer representing class membership of each pixel with 0s and 1s. If we want to construct a forest mask as we did above, this is easily done by extracting the fifth layer of this RasterBrick and replacing 0's with NA's.
 
 ```r
 forest <- raster(classes, 5)
@@ -635,6 +636,6 @@ We learned about:
 
 - Dealing with Landsat data
 - How to:
-  - report results and publish as an html
+  - report results and publish them as an html file
   - perform a supervised and unsupervised classification using R scripts – clump and sieve connected cells within a raster
   - deal with thematic (i.e. categorical raster data) by assigning raster attribute tables.

@@ -1,7 +1,7 @@
 ---
 title: Combining Raster and Vector
 ---
-In a previous post we saw how to deal with [Raster data using R](../Raster%20Classification/index.md), as well as how to deal with [vector data](../Vectors/index.md) and the multiple classes of the sp package. In this post, we'll see what can be achieved when the two worlds of vector data and raster data intersect.
+In a previous post, we saw how to deal with [Raster data using R](../Raster%20Classification/index.md), as well as how to deal with [vector data](../Vectors/index.md) and the multiple classes of the sp package. In this post, we'll see what can be achieved when the two worlds of vector data and raster data intersect.
 
 ## Conversions
 
@@ -15,7 +15,7 @@ The `rasterize()` function converts a vector object into a raster object.
 
 ### Raster to Vector
 
-Three functions allow to convert raster data to vector - the `rasterToPoints()`, `rasterToContour()`, and `rasterToPolygons()` functions. The latter can be useful to convert the result of a classification. In that case, set `dissolve = TRUE` so that the polygons with the same attribute value will be dissolved into multi-polygon regions. This option requires the `rgeos` package.
+Three functions allow us to convert raster data to vector - the `rasterToPoints()`, `rasterToContour()`, and `rasterToPolygons()` functions. The latter can be useful to convert the result of a classification. In that case, set `dissolve = TRUE` so that the polygons with the same attribute value will be dissolved into multi-polygon regions. This option requires the `rgeos` package.
 
 These methods are known to perform poorly under R. Calling `gdal_translate` directly or through the `gdalUtils` package can be much faster.
 
@@ -27,25 +27,25 @@ Raw raster data do not usually conform to any notion of administrative or geogra
 
 Cropping consists of reducing the full extent of a spatial object to a smaller extent. As a result, the output of `crop()` will automatically be rectangular and will not consider any features such as polygons to perform the sub-setting. It is useful to crop data as tightly as possible to reduce load and maintain focused visualization.
 
-The `crop()` function uses objects of class extent to define the new extent, or any object that can be coerced to an extent (see `?extent` for more info on this). This means that practically all spatial objects (raster or vector) can be used directly in `crop()`. Considering two raster objects, `r1` and `r2`, with `r2` being smaller than `r1`, you can simply use `crop(r1, r2)` in order to crop `r1` to the extent of `r2`.
+The `crop()` function uses objects of the class extent to define the new extent, or any object that can be coerced to an extent (see `?extent` for more info on this). This means that practically all spatial objects (raster or vector) can be used directly in `crop()`. Considering two raster objects, `r1`, and `r2`, with `r2` being smaller than `r1`, you can simply use `crop(r1, r2)` to crop `r1` to the extent of `r2`.
 
 You can easily define an extent interactively (by clicking) thanks to the `drawExtent()` function.
 
 ### Mask
 
-The `mask()` function can be used with almost all spatial objects to mask (= set to NA) values of a raster object. When used with a SpatialPolygon object, mask will keep values of the raster overlayed by polygons and mask the values outside of polygons.
+The `mask()` function can be used with almost all spatial objects to mask (= set to NA) values of a raster object. When used with a `SpatialPolygon` object, `mask` will keep values of the raster overlayed by polygons and mask the values outside of polygons.
 
-Note the very useful inverse argument of `mask()`, which allows to mask the inverse of the area covered by the features. We will use this feature of mask later in the tutorial to exclude water areas of a raster, defined in an independent `SpatialPolygons` object.
+Note the very useful inverse argument of `mask()`, which allows us to mask the inverse of the area covered by the features. We will use this feature of mask later in the tutorial to exclude water areas of a raster, defined in an independent `SpatialPolygons` object.
 
 ## Extract
 
-The most common operation when combining vector and raster data is the extraction. It simply consists of extracting the values of a raster object for locations specified by a vector object. The object can be of one the sp package classes, or an extent object.
+The most common operation when combining vector and raster data is extraction. It simply consists of extracting the values of a raster object for locations specified by a vector object. The object can be one of the `sp` package classes or an extent object.
 
-When using `extract()` with `SpatialPolygons` or `SpatialLines`, individual features of the vector layer may overlay or intersect several pixels. In that case a function (fun =) can be used to summarize the values into one. Note that although most often the functions `min`, `max`, `mean` and `median` are used for the spatial aggregation, also any custom-made function can be used. `extract()` provides many options for the return object, such as a data frame or a new sp object with extracted values appended to the attribute table. See `?extract()` example section.
+When using `extract()` with `SpatialPolygons` or `SpatialLines`, individual features of the vector layer may overlay or intersect several pixels. In that case, a function (fun =) can be used to summarize the values into one. Note that although most often the functions `min`, `max`, `mean` and `median` are used for the spatial aggregation, also any custom-made function can be used. `extract()` provides many options for the return object, such as a data frame or a new sp object with extracted values appended to the attribute table. See `?extract()` example section.
 
 ## Examples
 
-This post will use a simple land cover classification of Wageningen from Landsat 8 data as an example. (The example uses the same data used in the above mentioned raster post.)
+This post will use a simple land cover classification of Wageningen from Landsat 8 data as an example. (The example uses the same data used in the above-mentioned raster post.)
 
 Step by step we will:
 
@@ -55,7 +55,7 @@ Step by step we will:
 - Mask the data to match the boundaries of the city
 - Mask the data to exclude water bodies
 - Build a calibration dataset using Google Earth image interpretation
-- Export the Google Earth file and import it in R
+- Export the Google Earth file and import it into R
 - Extract the surface reflectance values for the calibration pixels
 - Calibrate a model with the classifier
 - Predict the land cover using a Landsat image
@@ -132,7 +132,7 @@ par(opar)
 
 ## Example of crop and mask
 
-In the figure above, the left panel displays the output of crop, while the second panel shows the result of masking the Landsat scene using the contour of Wageningen as input.
+In the figure above, the left panel displays the output of `crop`, while the second panel shows the result of masking the Landsat scene using the contour of Wageningen as input.
 
 We also have a water mask of Wageningen in vector format. Let's download it and also re-project it to the CRS of the Landsat data.
 
@@ -161,11 +161,11 @@ For the rest of the example, we'll use the `wagLandsatCrop` object, for I have a
 
 ## Build a calibration dataset in Google Earth
 
-Below we'll see how we can deal with a calibration dataset in R, for calibrating a classifier. It involves working with `SpatialPointsDataFrame` classes, extracting reflectance data for the corresponding calibration samples, manipulating data frames and building a model that can be used to predict land cover. But first we need to build the calibration dataset (ground truth), and for that we will use Google Earth.
+Below we'll see how we can deal with a calibration dataset in R, for calibrating a classifier. It involves working with `SpatialPointsDataFrame` classes, extracting reflectance data for the corresponding calibration samples, manipulating data frames, and building a model that can be used to predict land cover. But first, we need to build the calibration dataset (ground truth), and for that, we will use Google Earth.
 
-Open Google Earth, and search for Wageningen. Notice that the the city boundary is similar to the figure above (turn on the Borders and Labels from the "layers" panel). Now in places, right click on Temporary Places and select Add a Folder; name it appropriately (it will be your layer = argument afterwards when reading the KML file).
+Open Google Earth, and search for Wageningen. Notice that the city boundary is similar to the figure above (turn on the Borders and Labels from the "layers" panel). Now in places, right-click on Temporary Places and select Add a Folder; name it appropriately (it will be your layer = argument afterward when reading the KML file).
 
-Add new place maps (within the city limits) to that folder, and put the interpreted land cover in the description field. Keep it to a few classes, such as agric, forest, water, urban. I also added flood, to categorize the flood plain nearby the river. When you are done (15 - 30 points), save the file.
+Add new place maps (within the city limits) to that folder, and put the interpreted land cover in the description field. Keep it to a few classes, such as agric, forest, water, and urban. I also added flood, to categorize the floodplain nearby the river. When you are done (15 - 30 points), save the file.
 
 Note: in the approach described above, we get to decide where the calibration samples are. Another approach would be to automatically generate randomly distributed samples. This can be done very easily in R using the `sampleRandom()` function, which automatically returns a `SpatialPoints` object of any given size. In the family of spatial sampling functions, there is also `sampleRegular()` (for regular sampling) and `sampleStratified()`, which can be used on a categorical raster (e.g. a land cover classification), to ensure that all classes are equally represented in the sample.
 
@@ -182,7 +182,7 @@ samples <- readOGR('sampleLongLat.kml', layer = 'sampleLongLat')
 ## It has 2 fields
 ```
 
-We now need to extract the surface reflectance values of the corresponding samples. But first the data once again need to be re-projected to the CRS of the Landsat data.
+We now need to extract the surface reflectance values of the corresponding samples. But first, the data once again need to be re-projected to the CRS of the Landsat data.
 
 ```r
 ## Re-project SpatialPointsDataFrame
@@ -205,7 +205,7 @@ str(calib2)
 
 The use of `df = TRUE` in the `extract()` call is so that we get a data frame in return. Data frame is the most common class to work with all types of models, such as linear models (`lm()`) or random forest models as we use later.
 
-Now we will calibrate a random forest model using the extracted data frame. Do not focus too much on the algorithm used, the important part for this tutorial is the data extraction and the following data frame manipulation. More details will come about random forest classifiers tomorrow.
+Now we will calibrate a random forest model using the extracted data frame. Do not focus too much on the algorithm used, the important part of this tutorial is the data extraction and the following data frame manipulation. More details will come about random forest classifiers tomorrow.
 
 ```r
 if(!require(randomForest)) {
@@ -231,11 +231,11 @@ library(rasterVis)
 levelplot(lcMap, col.regions = c('green', 'brown', 'darkgreen', 'lightgreen', ' grey', 'blue'))
 ```
 
-Ok, we've seen better land cover maps of Wageningen, but given the amount of training data we used (14 in my case), it is not too bad. A larger calibration dataset would certainly result in a better accuracy.
+Ok, we've seen better land cover maps of Wageningen, but given the amount of training data we used (14 in my case), it is not too bad. A larger calibration dataset would certainly result in better accuracy.
 
 ## Extract Raster Values along a Transect
 
-Another use of the `extract()` function can be to visualize or analyze data along transects. In the following example, we will run a transect across Belgium and visualize the change in elevation.
+Another use of the `extract()` function can be to visualize or analyze data along transects. In the following example, we will run a transect across Belgium and visualize the elevation change.
 
 Let's first download the elevation data of Belgium, using the `getData()` function of the raster package.
 
@@ -272,13 +272,13 @@ Then the elevation values can simply be extracted using `extract()`. Note the us
 alt <- extract(bel, line, along = TRUE)
 ```
 
-We can already plot the result as follows, but the x axis does not really provide any indication of distance.
+We can already plot the result as follows, but the x-axis does not provide any indication of distance.
 
 ```r
 plot(alt\[\[1\]\], type = 'l', ylab = "Altitude (m)")
 ```
 
-In order to make an index for the x axis, we can calculate the distance between the two extremities of the transect, using `distHaversine()` from the geosphere package.
+To make an index for the x-axis, we can calculate the distance between the two extremities of the transect, using `distHaversine()` from the geosphere package.
 
 ```r
 if(!require(geosphere)) {
@@ -292,12 +292,12 @@ library(geosphere)
 distanceVector <- seq(0, dist, along.with = alt\[\[1\]\])
 ```
 
-We can't simply use the `LineLength()` function from the sp package because it is an all-R routine that computes total length of all lines in a `SpatialLines` object while `distHaversine()` gives the shortest distance between two points and assumes a spherical earth, ignoring ellipsoidal effects.
+We can't simply use the `LineLength()` function from the sp package because it is an all-R routine that computes the total length of all lines in a `SpatialLines` object while `distHaversine()` gives the shortest distance between two points and assumes a spherical earth, ignoring ellipsoidal effects.
 
 Note that there is a small approximation on the position of the line and the distances between the samples as the real shortest path between two points is not a straight line in lat-long, while the distance we just calculated is the shortest path. For short distances, as in the example, this is acceptable. Otherwise, we could also have:
 
 - Projected the raster and the line to a projected coordinate system, or
-- Made a true greatCircle line using `greatCircle()` from the sp package and extracted the elevation values from it.
+- Made a true `greatCircle` line using `greatCircle()` from the sp package and extracted the elevation values from it.
 
 Let's now visualize the final output.
 
