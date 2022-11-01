@@ -15,7 +15,7 @@ We will be working with many packages. You will have the chance to learn how to 
 - The new window is where you would insert your R Script.
 - Install packages using `install.packge(<PACKAGE_NAME>)`
 
-As a starter, we would like to install a few packages to work with Landsat Images. Since `bfastSpatial` package is still under development, you would need to install it directly from <github.com>. Install `devtools` first. Then, use `install_github` to install `bfastSpatial`. The rest is very typical:
+As a starter, we would like to install a few packages to work with Landsat Images. Since `bfastSpatial` package is still under development, you would need to install it directly from [GitHub](https://www.github.com/). Install `devtools` first. Then, use `install_github` to install `bfastSpatial`. The rest is very typical:
 
 ```r
 install.packages('devtools')
