@@ -1,7 +1,7 @@
 ---
 title: Combining Raster and Vector
 ---
-In a previous post, we saw how to deal with [Raster data using R](../Raster%20Classification/index.md), as well as how to deal with [vector data](../Vectors/index.md) and the multiple classes of the sp package. In this post, we'll see what can be achieved when the two worlds of vector data and raster data intersect.
+In a previous post, we saw how to deal with [Raster data using R](../raster-classification), as well as how to deal with [vector data](../vectors/) and the multiple classes of the sp package. In this post, we'll see what can be achieved when the two worlds of vector data and raster data intersect.
 
 ## Conversions
 
