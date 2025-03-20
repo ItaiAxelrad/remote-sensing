@@ -1,7 +1,8 @@
 ---
 title: Basin Runoff Estimation and Validation
 ---
-With a substantial decrease observed in streamflow gages across the world (Stokstad, 1999), remote sensing can provide valuable observations for estimating runoff in ungauged basins. A simple approach is to estimate the runoff in basins using the water balance approach. The water balance of a basin is given by
+
+With a substantial decrease observed in streamflow gages across the world (Stokstad, 1999), remote sensing can provide valuable observations for estimating runoff in un-gauged basins. A simple approach is to estimate the runoff in basins using the water balance approach. The water balance of a basin is given by
 
 `[Change in Storage (ds/dt)] = Precipitation (P) - Evapotranspiration (ET) - Runoff (Q)]`
 
@@ -30,7 +31,7 @@ The time period of January 2004 to December 2006 (with monthly time step).
 
 ## Testing
 
-Remote sensing provides observations for estimating runoff in ungauged basins using a simple water balance approach. The water balance of a basin is given by `ds/dt = P - ET - Q`. Change in storage, precipitation and evapotranspiration are quantities that can be remotely sensed, allowing for the inference of runoff.
+Remote sensing provides observations for estimating runoff in un-gauged basins using a simple water balance approach. The water balance of a basin is given by `ds/dt = P - ET - Q`. Change in storage, precipitation and evapotranspiration are quantities that can be remotely sensed, allowing for the inference of runoff.
 
 The study areas in this example include the Amazon, Mississippi, and Nile river basins. The time period under consideration is January 2004 to December 2006 (with Monthly time steps). Precipitation, evapotranspiration, and change in storage datasets were downloaded and preprocessed then basin-averaged time series were calculated. The datasets studied include TRMM 3B42RT (precipitation), GLEAM (evapotranspiration), GRACE (change in storage over time), and Pan et al. (2012) for ground truth data for all variables.
 
@@ -105,11 +106,11 @@ View(grace_dsdt)
 
 A summary of the compiled results from the above scripts can be found below:
 
-| amazon | ds/dt | nile | ds/dt | mississippi | ds/dt |
-| ------ | ----- | ---- | ----- | ----------- | ----- |
-| **Avg** | -1.829 | 0.000 | -0.789 | -0.002 | -0.523 | -0.131 |
-| **Max** | 17.782 | 12.191 | 5.975 | 4.303 | 6.559 | 3.865 |
-| **Min** | -19.889 | -9.186 | -6.135 | -5.479 | -8.904 | -5.420 |
+| stat    | amazon  | ds/dt  | nile   | ds/dt  | mississippi | ds/dt  |
+| ------- | ------- | ------ | ------ | ------ | ----------- | ------ |
+| **Avg** | -1.829  | 0.000  | -0.789 | -0.002 | -0.523      | -0.131 |
+| **Max** | 17.782  | 12.191 | 5.975  | 4.303  | 6.559       | 3.865  |
+| **Min** | -19.889 | -9.186 | -6.135 | -5.479 | -8.904      | -5.420 |
 
 ![MISSISSIPPI river basin](/images/MISSISSIPPI.png)
 

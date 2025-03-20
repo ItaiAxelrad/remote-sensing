@@ -10,7 +10,7 @@ eleventyExcludeFromCollections: true
 
 Please help me find out which "municipality" in the Netherlands is the greenest. You can use the MODIS NDVI data available here.
 
-Hint: use `nlMunicipality <- getData('GADM',country='NLD', level=2)`
+Hint: use `nlMunicipality <- getData('GADM', country='NLD', level=2)`
 
 - Find the greenest Municipality:
   - In January

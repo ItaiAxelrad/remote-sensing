@@ -10,7 +10,7 @@
     "serve": "npx @11ty/eleventy --serve",
     "start": "npx @11ty/eleventy --serve",
     "debug": "DEBUG=* npx @11ty/eleventy",
-    "update": "npm i -g npm-check-updates && ncu -u && npm install && npm audit fix"
+    "update": "ncu -u && npm install && npm audit fix"
   },
   "repository": {
     "type": "git",
@@ -22,14 +22,13 @@
     "r"
   ],
   "author": "Itai Axelrad",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/ItaiAxelrad/remote-sensing-data/issues"
   },
   "homepage": "https://github.com/ItaiAxelrad/remote-sensing-data#readme",
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0",
-    "@11ty/eleventy-navigation": "^0.3.5",
+    "@11ty/eleventy-navigation": "^1.0.1",
     "@11ty/eleventy-plugin-syntaxhighlight": "^5.0.0"
   }
 }
